@@ -1,6 +1,6 @@
 package jogotabuleiro;
 
-public class Peça {
+public abstract class Peça {
 	
 	protected Posicao posicao;
 	
@@ -15,8 +15,21 @@ public class Peça {
 		return tabuleiro;
 	}
 
+	public abstract boolean[][] Movimentospossiveis();
 	
-	
-	
+	public boolean Movimentopossivel(Posicao posicao) {
+		return Movimentospossiveis()[posicao.getLinha()][posicao.getColuna()];
+	}
 
+	public boolean ExisteMovimentoPossivel() {
+		boolean[][] mat = Movimentospossiveis();
+		for(int i=0; i<mat.length; i++) {
+			for(int j=0; j<mat.length;j++) {
+				if(mat[i][j]) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 }

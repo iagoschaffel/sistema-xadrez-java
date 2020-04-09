@@ -38,6 +38,9 @@ public class PartidaXadrez {
 		if(!tabuleiro.temUmaPeça(posicao)) {
 			throw new ExcecaoXadrez("Nao existe peça na posição de origem.");
 		}
+		if(!tabuleiro.peça(posicao).ExisteMovimentoPossivel()) {
+			throw new ExcecaoXadrez("Nao existem movimentos possiveis para a peça escolhida.");
+		}
 	}
 	
 	private Peça fazerMovimento(Posicao origem, Posicao alvo) {
