@@ -16,6 +16,10 @@ public abstract class PeçaXadrez extends Peça {
 		public Cor getCor() {
 			return cor;
 		}
+		
+		public PosicaoXadrez getPosicaoXadrez() {
+			return PosicaoXadrez.dePosicao(posicao);
+		}
 
 		protected boolean temUmaPeçaOponente(Posicao posicao) {
 			

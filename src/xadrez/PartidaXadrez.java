@@ -2,6 +2,7 @@ package xadrez;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import jogotabuleiro.Peça;
 import jogotabuleiro.Posicao;
@@ -14,6 +15,7 @@ public class PartidaXadrez {
 	private int turno;
 	private Cor Jogadoratual;
 	private Tabuleiro tabuleiro;
+	private boolean xeque;
 	
 	private List<Peça> peçasNoTabuleiro = new ArrayList<>();
 	private List<Peça> peçasCapturadas = new ArrayList<>();
@@ -31,6 +33,10 @@ public class PartidaXadrez {
 	
 	public Cor getJogadorAtual() {
 		return Jogadoratual;
+	}
+	
+	public boolean getXeque() {
+		return xeque;
 	}
 	
 	public PeçaXadrez[][] getPeças() {
@@ -56,6 +62,14 @@ public class PartidaXadrez {
 		validarOrigemPosicao(origem);
 		validarAlvoPosicao(origem, alvo);
 		Peça Peçacapturada = fazerMovimento(origem, alvo);
+		
+		if(testeXeque(Jogadoratual)) {
+			desfazerMovimento(origem, alvo, Peçacapturada);
+			throw new ExcecaoXadrez("Voce nao pode se colocar em xeque.");
+		}
+		
+		xeque = (testeXeque(oponente(Jogadoratual))) ? true : false;
+		
 		proximoTurno();
 		return (PeçaXadrez)Peçacapturada;
 	}
@@ -93,9 +107,46 @@ public class PartidaXadrez {
 		
 	}
 	
+	private void desfazerMovimento(Posicao origem, Posicao alvo, Peça peçaCapturada) {
+		Peça p = tabuleiro.removerPeça(alvo);
+		tabuleiro.posicionarPeça(p,origem);
+		
+		if(peçaCapturada != null) {
+			tabuleiro.posicionarPeça(peçaCapturada, alvo);
+			peçasCapturadas.remove(peçaCapturada);
+			peçasNoTabuleiro.add(peçaCapturada);
+		}
+	}
+	
 	private void proximoTurno() {
 		turno++;
 		Jogadoratual = (Jogadoratual == Cor.BRANCO) ? Cor.PRETO : Cor.BRANCO;
+	}
+	
+	private Cor oponente(Cor cor) {
+		return(cor == Cor.BRANCO) ? Cor.PRETO : Cor.BRANCO;
+	}
+	
+	private PeçaXadrez rei(Cor cor) {
+		List<Peça> lista = peçasNoTabuleiro.stream().filter(x -> ((PeçaXadrez)x).getCor() == cor).collect(Collectors.toList());
+		for(Peça p : lista) {
+			if(p instanceof Rei) {
+				return (PeçaXadrez)p;
+			}
+		}
+		throw new IllegalStateException("Nao existe o rei " + cor + " no tabuleiro.");
+	}
+	
+	private boolean testeXeque(Cor cor) {
+		Posicao Posicaorei = rei(cor).getPosicaoXadrez().paraPosicao();
+		List<Peça> Peçasoponente = peçasNoTabuleiro.stream().filter(x -> ((PeçaXadrez)x).getCor() == oponente(cor)).collect(Collectors.toList());
+		for(Peça p : Peçasoponente) {
+			boolean [][] mat = p.Movimentospossiveis();
+			if(mat[Posicaorei.getLinha()][Posicaorei.getColuna()]) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	private void posicionarPeçaNova(char coluna, int linha, PeçaXadrez peça) {
