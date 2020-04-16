@@ -16,6 +16,7 @@ public class PartidaXadrez {
 	private Cor Jogadoratual;
 	private Tabuleiro tabuleiro;
 	private boolean xeque;
+	private boolean xequeMate;
 	
 	private List<Peça> peçasNoTabuleiro = new ArrayList<>();
 	private List<Peça> peçasCapturadas = new ArrayList<>();
@@ -37,6 +38,10 @@ public class PartidaXadrez {
 	
 	public boolean getXeque() {
 		return xeque;
+	}
+	
+	public boolean getXequeMate() {
+		return xequeMate;
 	}
 	
 	public PeçaXadrez[][] getPeças() {
@@ -70,7 +75,12 @@ public class PartidaXadrez {
 		
 		xeque = (testeXeque(oponente(Jogadoratual))) ? true : false;
 		
-		proximoTurno();
+		if(testeXequeMate(oponente(Jogadoratual))) {
+			xequeMate = true;
+		}
+		else {
+			proximoTurno();
+		}
 		return (PeçaXadrez)Peçacapturada;
 	}
 	
@@ -149,26 +159,43 @@ public class PartidaXadrez {
 		return false;
 	}
 	
+	private boolean testeXequeMate(Cor cor) {
+		if(!testeXeque(cor)) {
+			return false;
+		}
+		List<Peça> lista = peçasNoTabuleiro.stream().filter(x -> ((PeçaXadrez)x).getCor() == cor).collect(Collectors.toList());
+		for(Peça p : lista) {
+			boolean [][] mat = p.Movimentospossiveis();
+			for(int i=0; i<tabuleiro.getLinhas();i++) {
+				for(int j=0; j<tabuleiro.getColunas();j++) {
+					if(mat[i][j]) {
+						Posicao origem = ((PeçaXadrez)p).getPosicaoXadrez().paraPosicao();
+						Posicao alvo = new Posicao(i,j);
+						Peça PeçaCapturada = fazerMovimento(origem, alvo);
+						boolean testeXeque = testeXeque(cor);
+						desfazerMovimento(origem, alvo, PeçaCapturada);
+						if(!testeXeque) {
+							return false;
+						}
+					}
+				}
+			}
+		}
+		return true;
+	}
+	
 	private void posicionarPeçaNova(char coluna, int linha, PeçaXadrez peça) {
 		tabuleiro.posicionarPeça(peça, new PosicaoXadrez(coluna,linha).paraPosicao());
 		peçasNoTabuleiro.add(peça);
 	}
 	
 	private void Configuracaoinicial() {
-		
-		posicionarPeçaNova('c', 1, new Torre(tabuleiro, Cor.BRANCO));
-		posicionarPeçaNova('c', 2, new Torre(tabuleiro, Cor.BRANCO));
-		posicionarPeçaNova('d', 2, new Torre(tabuleiro, Cor.BRANCO));
-		posicionarPeçaNova('e', 2, new Torre(tabuleiro, Cor.BRANCO));
-		posicionarPeçaNova('e', 1, new Torre(tabuleiro, Cor.BRANCO));
-		posicionarPeçaNova('d', 1, new Rei(tabuleiro, Cor.BRANCO));
+		posicionarPeçaNova('h', 7, new Torre(tabuleiro, Cor.BRANCO));
+		posicionarPeçaNova('d', 1, new Torre(tabuleiro, Cor.BRANCO));
+		posicionarPeçaNova('e', 1, new Rei(tabuleiro, Cor.BRANCO));
 
-		posicionarPeçaNova('c', 7, new Torre(tabuleiro, Cor.PRETO));
-		posicionarPeçaNova('c', 8, new Torre(tabuleiro, Cor.PRETO));
-		posicionarPeçaNova('d', 7, new Torre(tabuleiro, Cor.PRETO));
-		posicionarPeçaNova('e', 7, new Torre(tabuleiro, Cor.PRETO));
-		posicionarPeçaNova('e', 8, new Torre(tabuleiro, Cor.PRETO));
-		posicionarPeçaNova('d', 8, new Rei(tabuleiro, Cor.PRETO));
+		posicionarPeçaNova('b', 8, new Torre(tabuleiro, Cor.PRETO));
+		posicionarPeçaNova('a', 8, new Rei(tabuleiro, Cor.PRETO));
 	}
 
 }

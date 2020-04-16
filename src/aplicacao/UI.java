@@ -58,11 +58,18 @@ public class UI {
 		printPeçasCapturadas(capturada);
 		System.out.println();
 		System.out.println("Turno: " + Partidaxadrez.getTurno());
-		System.out.println("Aguardando jogador: " + Partidaxadrez.getJogadorAtual());
-		if(Partidaxadrez.getXeque()) {
+		if(!Partidaxadrez.getXequeMate()) {
+			System.out.println("Aguardando jogador: " + Partidaxadrez.getJogadorAtual());
+			if(Partidaxadrez.getXeque()) {
 			System.out.println("XEQUE!");
+			}
 		}
-	}
+		else {
+			System.out.println("XEQUEMATE!");
+			System.out.println("Vencedor: " + Partidaxadrez.getJogadorAtual());
+			}
+		}
+	
 	
 	public static void printTabuleiro(PeçaXadrez[][] peças) {
 
