@@ -118,6 +118,26 @@ public class PartidaXadrez {
 			peçasCapturadas.add(peçaCapturada);
 		}
 		
+		// Movimento especial Roque do lado do Rei
+		
+		if(p instanceof Rei && alvo.getColuna() == origem.getColuna() + 2) {
+			Posicao origemT = new Posicao(origem.getLinha(), origem.getColuna() + 3);
+			Posicao alvoT = new Posicao(origem.getLinha(), origem.getColuna() + 1);
+			PeçaXadrez torre = (PeçaXadrez)tabuleiro.removerPeça(origemT);
+			tabuleiro.posicionarPeça(torre, alvoT);
+			torre.incrementarContadorMovimento();
+		}
+		
+		// Movimento especial Roque do lado do Rei
+		
+				if(p instanceof Rei && alvo.getColuna() == origem.getColuna() - 2) {
+					Posicao origemT = new Posicao(origem.getLinha(), origem.getColuna() - 4);
+					Posicao alvoT = new Posicao(origem.getLinha(), origem.getColuna() - 1);
+					PeçaXadrez torre = (PeçaXadrez)tabuleiro.removerPeça(origemT);
+					tabuleiro.posicionarPeça(torre, alvoT);
+					torre.incrementarContadorMovimento();
+		}
+		
 		return peçaCapturada;
 		
 	}
@@ -132,6 +152,26 @@ public class PartidaXadrez {
 			peçasCapturadas.remove(peçaCapturada);
 			peçasNoTabuleiro.add(peçaCapturada);
 		}
+		// Movimento especial Roque do lado do Rei
+		
+				if(p instanceof Rei && alvo.getColuna() == origem.getColuna() + 2) {
+					Posicao origemT = new Posicao(origem.getLinha(), origem.getColuna() + 3);
+					Posicao alvoT = new Posicao(origem.getLinha(), origem.getColuna() + 1);
+					PeçaXadrez torre = (PeçaXadrez)tabuleiro.removerPeça(alvoT);
+					tabuleiro.posicionarPeça(torre, origemT);
+					torre.decrementarContadorMovimento();
+				}
+				
+			// Movimento especial Roque do lado do Rei
+				
+					if(p instanceof Rei && alvo.getColuna() == origem.getColuna() - 2) {
+						Posicao origemT = new Posicao(origem.getLinha(), origem.getColuna() - 4);
+						Posicao alvoT = new Posicao(origem.getLinha(), origem.getColuna() - 1);
+						PeçaXadrez torre = (PeçaXadrez)tabuleiro.removerPeça(alvoT);
+						tabuleiro.posicionarPeça(torre, origemT);
+						torre.decrementarContadorMovimento();
+				}
+		
 	}
 	
 	private void proximoTurno() {
@@ -198,7 +238,7 @@ public class PartidaXadrez {
 	private void Configuracaoinicial() {
 		posicionarPeçaNova('a', 1, new Torre(tabuleiro, Cor.BRANCO));
 		posicionarPeçaNova('h', 1, new Torre(tabuleiro, Cor.BRANCO));
-		posicionarPeçaNova('e', 1, new Rei(tabuleiro, Cor.BRANCO));
+		posicionarPeçaNova('e', 1, new Rei(tabuleiro, Cor.BRANCO,this));
 		posicionarPeçaNova('d', 1, new Rainha(tabuleiro, Cor.BRANCO));
 		posicionarPeçaNova('c', 1, new Bispo(tabuleiro, Cor.BRANCO));
 		posicionarPeçaNova('f', 1, new Bispo(tabuleiro, Cor.BRANCO));
@@ -215,7 +255,7 @@ public class PartidaXadrez {
 
 		posicionarPeçaNova('a', 8, new Torre(tabuleiro, Cor.PRETO));
 		posicionarPeçaNova('h', 8, new Torre(tabuleiro, Cor.PRETO));
-		posicionarPeçaNova('e', 8, new Rei(tabuleiro, Cor.PRETO));
+		posicionarPeçaNova('e', 8, new Rei(tabuleiro, Cor.PRETO,this));
 		posicionarPeçaNova('d', 8, new Rainha(tabuleiro, Cor.PRETO));
 		posicionarPeçaNova('c', 8, new Bispo(tabuleiro, Cor.PRETO));
 		posicionarPeçaNova('f', 8, new Bispo(tabuleiro, Cor.PRETO));

@@ -3,12 +3,16 @@ package xadrez.peças;
 import jogotabuleiro.Posicao;
 import jogotabuleiro.Tabuleiro;
 import xadrez.Cor;
+import xadrez.PartidaXadrez;
 import xadrez.PeçaXadrez;
 
 public class Rei extends PeçaXadrez {
+	
+	private PartidaXadrez Partidaxadrez;
 
-	public Rei(Tabuleiro tabuleiro, Cor cor) {
+	public Rei(Tabuleiro tabuleiro, Cor cor, PartidaXadrez Partidaxadrez) {
 		super(tabuleiro, cor);
+		this.Partidaxadrez = Partidaxadrez;
 		
 	}
 
@@ -22,6 +26,11 @@ public class Rei extends PeçaXadrez {
 		
 		PeçaXadrez p = (PeçaXadrez)getTabuleiro().peça(posicao);
 		return p == null || p.getCor() != getCor();
+	}
+	
+	private boolean testeRoqueTorre(Posicao posicao) {
+		PeçaXadrez p = (PeçaXadrez)getTabuleiro().peça(posicao);
+		return p != null && p instanceof Torre && p.getCor() == getCor() && p.getContadorMovimento() == 0;
 	}
 
 	@Override
@@ -84,6 +93,33 @@ public class Rei extends PeçaXadrez {
 				if(getTabuleiro().posicaoExiste(p) && podeMover(p)) {
 					mat[p.getLinha()][p.getColuna()] = true;
 				}
+				
+				// #Movimento Especial Roque
+				
+				if(getContadorMovimento() == 0 && !Partidaxadrez.getXeque()) {
+					// Movimento Especial Roque do lado do Rei
+					Posicao posT1 = new Posicao(posicao.getLinha(),posicao.getColuna() + 3);
+					if(testeRoqueTorre(posT1)) {
+						Posicao p1 = new Posicao(posicao.getLinha(),posicao.getColuna() + 1);
+						Posicao p2 = new Posicao(posicao.getLinha(),posicao.getColuna() + 2);
+						if(getTabuleiro().peça(p1) == null && getTabuleiro().peça(p2) == null) {
+							mat[posicao.getLinha()][posicao.getColuna() +2] = true;
+						}
+					}
+					
+					// Movimento Especial Roque do lado da Rainha
+					Posicao posT2 = new Posicao(posicao.getLinha(),posicao.getColuna() - 4);
+					if(testeRoqueTorre(posT2)) {
+						Posicao p1 = new Posicao(posicao.getLinha(),posicao.getColuna() - 1);
+						Posicao p2 = new Posicao(posicao.getLinha(),posicao.getColuna() - 2);
+						Posicao p3 = new Posicao(posicao.getLinha(),posicao.getColuna() - 3);
+						if(getTabuleiro().peça(p1) == null && getTabuleiro().peça(p2) == null && getTabuleiro().peça(p3) == null){
+							mat[posicao.getLinha()][posicao.getColuna() - 2] = true;
+						}
+					}
+				}
+				
+				
 		return mat;
 	}
 }
